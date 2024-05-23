@@ -1,3 +1,4 @@
+# credo:disable-for-this-file Credo.Check.Readability.Specs
 defmodule UrServices.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring
@@ -13,17 +14,18 @@ defmodule UrServices.DataCase do
   by setting `use UrServices.DataCase, async: true`, although
   this option is not recommended for other databases.
   """
-
   use ExUnit.CaseTemplate
+
+  alias Ecto.Adapters.SQL
 
   using do
     quote do
-      alias UrServices.Repo
-
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
       import UrServices.DataCase
+
+      alias UrServices.Repo
     end
   end
 
@@ -36,8 +38,8 @@ defmodule UrServices.DataCase do
   Sets up the sandbox based on the test tags.
   """
   def setup_sandbox(tags) do
-    pid = Ecto.Adapters.SQL.Sandbox.start_owner!(UrServices.Repo, shared: not tags[:async])
-    on_exit(fn -> Ecto.Adapters.SQL.Sandbox.stop_owner(pid) end)
+    pid = SQL.Sandbox.start_owner!(UrServices.Repo, shared: not tags[:async])
+    on_exit(fn -> SQL.Sandbox.stop_owner(pid) end)
   end
 
   @doc """
@@ -50,7 +52,7 @@ defmodule UrServices.DataCase do
   """
   def errors_on(changeset) do
     Ecto.Changeset.traverse_errors(changeset, fn {message, opts} ->
-      Regex.replace(~r"%{(\w+)}", message, fn _, key ->
+      Regex.replace(~r"%{(\w+)}", message, fn _match, key ->
         opts |> Keyword.get(String.to_existing_atom(key), key) |> to_string()
       end)
     end)

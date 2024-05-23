@@ -20,14 +20,15 @@ defmodule UrServicesWeb.ConnCase do
   using do
     quote do
       # The default endpoint for testing
-      @endpoint UrServicesWeb.Endpoint
-
       use UrServicesWeb, :verified_routes
+
+      import Phoenix.ConnTest
 
       # Import conveniences for testing with connections
       import Plug.Conn
-      import Phoenix.ConnTest
       import UrServicesWeb.ConnCase
+
+      @endpoint UrServicesWeb.Endpoint
     end
   end
 
